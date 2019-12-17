@@ -1,0 +1,8 @@
+LICENSE
+All computer programs (hereinafter collectively referred to as the “Software”) downloadable from this webpage may be used only under the following conditions:
+1.    You may only install and use the Software for your own internal, personal, non-commercial, research use. The use of the Software other than internal, personal, non-commercial, research use is expressly forbidden.
+2.    You may not copy, modify, merge, publish, distribute, sublicense and/or sell the Software. Any attempt otherwise to copy, modify, merge, publish, distribute, sublicense and/or sell the Software is forbidden and will automatically terminate your rights of use under this License;
+3.    You may not decompile, disassemble, decrypt, extract, or otherwise reverse engineer the Software or any component thereof (including documentation obtained in conjunction with the Software).
+4.    This License will terminate automatically on September 30th, 2012.
+5.    You acknowledge and accept that the Software is provided “as is”, without warranty of any kind, express or implied. In no event shall the copyright holder(s) be liable for any claim, damages or other liability arising from, out of or in connection with the Software.
+

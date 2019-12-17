@@ -1,0 +1,787 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+ /*
+ * JGridFrm.java
+ *
+ * Created on 27-mag-2010, 9.41.01
+ */
+package Tough2ViewerPRJ;
+
+import gov.noaa.pmel.sgt.AbstractPane;
+import gov.noaa.pmel.sgt.CartesianGraph;
+import gov.noaa.pmel.sgt.CartesianRenderer;
+import gov.noaa.pmel.sgt.ColorMap;
+import gov.noaa.pmel.sgt.ContourLevels;
+import gov.noaa.pmel.sgt.GridAttribute;
+import gov.noaa.pmel.sgt.GridCartesianRenderer;
+import gov.noaa.pmel.sgt.IndexedColorMap;
+import gov.noaa.pmel.sgt.LinearTransform;
+import gov.noaa.pmel.sgt.dm.SGTData;
+import gov.noaa.pmel.sgt.swing.JClassTree;
+import gov.noaa.pmel.sgt.swing.JPlotLayout;
+import gov.noaa.pmel.sgt.swing.prop.GridAttributeDialog;
+import gov.noaa.pmel.util.Dimension2D;
+import gov.noaa.pmel.util.Range2D;
+import gov.noaa.pmel.util.Rectangle2D;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.print.PageFormat;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Hashtable;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.RepaintManager;
+
+/**
+ *
+ * @author stebond
+ */
+public class JContourFrm extends javax.swing.JFrame {
+
+    JPlotLayout rpl_;//qui c'era 'static' davanti e c'era JplotLayout2
+    private GridAttribute gridAttr_;
+    PageFormat pageFormat = PrinterJob.getPrinterJob().defaultPage();
+    private boolean initcompleted = false;
+    int nx = 20;
+    int ny = 20;
+    int nz = 20;
+    int neighbors = 10;
+    String[] UM;
+    double[][] tableGRD;
+    double Xmin_grd, Xmax_grd, Ymin_grd, Ymax_grd, Zmin_grd, Zmax_grd;
+    int nx_grd, ny_grd;
+
+    /**
+     * Creates new form JGridFrm
+     */
+    public JContourFrm() {
+
+        initComponents();
+        jSlider1.setPaintTicks(true);
+        jSlider1.setMinimum(0);
+        jSlider1.setMaximum(Tough2Viewer.dataobj.get_TimeSteps() - 1);
+        jSlider1.setMajorTickSpacing(1);
+        jSlider1.setMinorTickSpacing(1);
+        jSlider1.setValue(0);
+        Font font = new Font("Serif", Font.ITALIC, 15);
+        jSlider1.setFont(font);
+        jSlider1.setSnapToTicks(true);
+        String Tooltip = Float.toString(Tough2Viewer.dataobj.get_Times(0)) + " S";
+        jSlider1.setToolTipText(Tooltip);
+        Hashtable labelTable = new Hashtable();
+        for (int i = 0; i < Tough2Viewer.dataobj.get_TimeSteps(); i++) {
+            String myTickLabel = String.valueOf(i);
+            labelTable.put(i, new JLabel(myTickLabel));
+        }
+        jSlider1.setLabelTable(labelTable);
+        jSlider1.setPaintLabels(true);
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(Tough2Viewer.dataobj.getVariableName()));
+        UM = Tough2Viewer.dataobj.getVariablesUM();
+        String[] value = {"XY", "XZ", "YZ"};
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(value));
+        initcompleted = true;
+        String mygridtype = Tough2Viewer.dataobj.getGridType();
+        float xyz = 0.0f;
+        if (mygridtype.contentEquals("xy")) {
+            jComboBox2.setSelectedIndex(0);
+            jComboBox2.setEnabled(false);
+            xyz = Tough2Viewer.dataobj.get_zmin();
+            jTextField1.setText(Float.toString(xyz));
+            jTextField1.setEnabled(false);
+            jTextField4.setText(Integer.toString(1));
+            jTextField4.setEnabled(false);
+        }
+        if (mygridtype.contentEquals("xz")) {
+            jComboBox2.setSelectedIndex(1);
+            jComboBox2.setEnabled(false);
+            xyz = Tough2Viewer.dataobj.get_ymin();
+            jTextField1.setText(Float.toString(xyz));
+            jTextField1.setEnabled(false);
+            jTextField3.setText(Integer.toString(1));
+            jTextField3.setEnabled(false);
+        }
+        if (mygridtype.contentEquals("yz")) {
+            jComboBox2.setSelectedIndex(2);
+            jComboBox2.setEnabled(false);
+            xyz = Tough2Viewer.dataobj.get_xmin();
+            jTextField1.setText(Float.toString(xyz));
+            jTextField1.setEnabled(false);
+            jTextField2.setText(Integer.toString(1));
+            jTextField2.setEnabled(false);
+        }
+        int a = jComboBox2.getSelectedIndex();
+        if (a == 0) {
+            jLabel1.setText("z=");
+        }
+        if (a == 1) {
+            jLabel1.setText("y=");
+        }
+        if (a == 2) {
+            jLabel1.setText("x=");
+        }
+        jTextField1.setText(Float.toString(xyz));
+        this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jTree = new javax.swing.JButton();
+        jButtonLayout = new javax.swing.JButton();
+        jButtonEdit = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jButtonPrint = new javax.swing.JButton();
+        jComboBox2 = new javax.swing.JComboBox();
+        jSlider1 = new javax.swing.JSlider();
+        jButton1 = new javax.swing.JButton();
+        jTextField1 = new javax.swing.JTextField();
+        jComboBox1 = new javax.swing.JComboBox();
+        jTextField4 = new javax.swing.JTextField();
+        jTextField3 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jTextField5 = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
+        jButtonExport = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Contour Plot");
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("SGT"));
+        jPanel1.setPreferredSize(new java.awt.Dimension(500, 500));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 392, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 496, Short.MAX_VALUE)
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Options"));
+
+        jTree.setText("Tree");
+        jTree.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTreeActionPerformed(evt);
+            }
+        });
+
+        jButtonLayout.setText("Layout");
+        jButtonLayout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonLayoutActionPerformed(evt);
+            }
+        });
+
+        jButtonEdit.setText("Edit");
+        jButtonEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEditActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("z=");
+
+        jButtonPrint.setText("Print");
+        jButtonPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPrintActionPerformed(evt);
+            }
+        });
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox2ActionPerformed(evt);
+            }
+        });
+
+        jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSlider1StateChanged(evt);
+            }
+        });
+
+        jButton1.setText("Plot");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jTextField1.setText("-2500");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
+        jTextField4.setText("20");
+
+        jTextField3.setText("20");
+        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField3ActionPerformed(evt);
+            }
+        });
+
+        jTextField2.setText("20");
+
+        jLabel4.setText("nz=");
+
+        jLabel5.setText("GridMap");
+
+        jLabel2.setText("nx=");
+
+        jLabel3.setText("ny=");
+
+        jLabel6.setText("Variable");
+
+        jLabel7.setText("Sectioning Plane");
+
+        jLabel8.setText("neigh.=");
+
+        jTextField5.setText("10");
+
+        jButton2.setText("Close");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButtonExport.setText("Export");
+        jButtonExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonExportActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(18, 18, 18)
+                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel4)
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addComponent(jLabel2)
+                                            .addGap(36, 36, 36))
+                                        .addComponent(jLabel8)
+                                        .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING))
+                                    .addComponent(jLabel3))
+                                .addGap(36, 36, 36)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                                    .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                                    .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                                    .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 77, Short.MAX_VALUE)
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButtonPrint)
+                            .addComponent(jButtonLayout)
+                            .addComponent(jButtonExport)
+                            .addComponent(jButtonEdit)
+                            .addComponent(jButton1)
+                            .addComponent(jButton2)
+                            .addComponent(jTree))))
+                .addContainerGap())
+        );
+
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButton1, jButton2, jButtonEdit, jButtonLayout, jButtonPrint, jComboBox1, jComboBox2, jLabel1, jTextField1, jTree});
+
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
+                .addGap(9, 9, 9)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(18, 18, 18)
+                        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(31, 31, 31)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonEdit)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTree)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonPrint))
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonLayout)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonExport)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addComponent(jButton2))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEditActionPerformed
+
+        GridAttributeDialog gad = new GridAttributeDialog();
+        gad.setJPane(rpl_);
+        CartesianRenderer rend = ((CartesianGraph) rpl_.getFirstLayer().getGraph()).getRenderer();
+        gad.setGridCartesianRenderer((GridCartesianRenderer) rend);
+        gad.setVisible(true);
+    }//GEN-LAST:event_jButtonEditActionPerformed
+
+    private void jTreeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTreeActionPerformed
+
+        JClassTree ct = new JClassTree();
+        ct.setModal(false);
+        ct.setJPane(rpl_);
+        ct.show();
+    }//GEN-LAST:event_jTreeActionPerformed
+
+    private void jButtonPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPrintActionPerformed
+        Color saveColor;
+        PrinterJob printJob = PrinterJob.getPrinterJob();
+        printJob.setPrintable(rpl_, pageFormat);
+        printJob.setJobName("Grid Demo");
+        if (printJob.printDialog()) {
+            try {
+                saveColor = rpl_.getBackground();
+                if (!saveColor.equals(Color.white)) {
+                    rpl_.setBackground(Color.white);
+                }
+                rpl_.setPageAlign(AbstractPane.TOP,
+                        AbstractPane.CENTER);
+                RepaintManager currentManager = RepaintManager.currentManager(rpl_);
+                currentManager.setDoubleBufferingEnabled(false);
+                printJob.print();
+                currentManager.setDoubleBufferingEnabled(true);
+                rpl_.setBackground(saveColor);
+            } catch (PrinterException pe) {
+                System.out.println("Error printing: " + pe);
+            }
+        }
+
+    }//GEN-LAST:event_jButtonPrintActionPerformed
+
+    private void jButtonLayoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLayoutActionPerformed
+        PrinterJob pj = PrinterJob.getPrinterJob();
+        pageFormat = pj.pageDialog(pageFormat);
+    }//GEN-LAST:event_jButtonLayoutActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        Tough2Viewer.dataobj.set_actualVariableToPlot(jComboBox1.getSelectedIndex());
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
+        Tough2Viewer.dataobj.set_actualTimeToPlot(jSlider1.getValue());
+        String Tooltip = Float.toString(Tough2Viewer.dataobj.get_Times(jSlider1.getValue()));
+        jSlider1.setToolTipText(Tooltip);
+    }//GEN-LAST:event_jSlider1StateChanged
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        plotGraph();
+        this.repaint();
+        Dimension pippo1 = jPanel1.getSize();
+        if (rpl_ != null) {
+            rpl_.setSize(jPanel1.getSize());
+            rpl_.repaint();
+        }
+        this.repaint();
+        Dimension pippo = this.getSize();
+        this.setSize(pippo.width + 1, pippo.height + 1);
+        this.repaint();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        int a = jComboBox2.getSelectedIndex();
+        if (a == 0) {
+            jLabel1.setText("z=");
+        }
+        if (a == 1) {
+            jLabel1.setText("y=");
+        }
+        if (a == 2) {
+            jLabel1.setText("x=");
+        }
+    }//GEN-LAST:event_jComboBox2ActionPerformed
+
+    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        this.setVisible(false);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButtonExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportActionPerformed
+        //surfer format grd
+        String FilePathString = Tough2Viewer.dataobj.get_WorkingPath();
+        final JFileChooser fc = new JFileChooser(FilePathString);
+        String filename = "Contour_" + (String) jComboBox1.getSelectedItem() + "_T=" + Integer.toString(jSlider1.getValue()) + ".grd";
+        String SuggestedFileName = FilePathString + "\\" + filename;
+        File suggestedFile = new File(SuggestedFileName);
+        fc.setSelectedFile(suggestedFile);
+        int returnVal = fc.showSaveDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            String strFilePath = fc.getSelectedFile().toString();
+            try {
+                //Open an output stream
+                FileOutputStream fos = new FileOutputStream(strFilePath, true);
+                //DataOutputStream dos = new DataOutputStream(fos);
+                PrintStream ps;
+                // Print a line of text
+                ps = new PrintStream(fos);
+                String lineaOUT = "DSAA";
+                ps.println(lineaOUT);
+                lineaOUT = Integer.toString(nx_grd) + " " + Integer.toString(ny_grd);
+                ps.println(lineaOUT);
+                lineaOUT = Double.toString(Xmin_grd) + " " + Double.toString(Xmax_grd);
+                ps.println(lineaOUT);
+                lineaOUT = Double.toString(Ymin_grd) + " " + Double.toString(Ymax_grd);
+                ps.println(lineaOUT);
+                lineaOUT = Double.toString(Zmin_grd) + " " + Double.toString(Zmax_grd);
+                ps.println(lineaOUT);
+                for (int j = 0; j < ny_grd; j++) {
+                    lineaOUT = "";
+                    for (int i = 0; i < nx_grd; i++) {
+                        lineaOUT = lineaOUT + Double.toString(tableGRD[j][i]) + " ";
+                    }
+                    ps.println(lineaOUT);
+                }
+                ps.println("");
+                fos.close();
+            } catch (IOException e)// Catches any error condition
+            {
+                String output = "Unable to write GRD file";
+                Tough2Viewer.toLogFile(output);
+            }
+
+        }
+    }//GEN-LAST:event_jButtonExportActionPerformed
+    JPlotLayout makeGraph() {
+        /*
+    * This example uses a pre-created "Layout" for raster time
+    * series to simplify the construction of a plot. The
+    * JPlotLayout can plot a single grid with
+    * a ColorKey, time series with a LineKey, point collection with a
+    * PointCollectionKey, and general X-Y plots with a
+    * LineKey. JPlotLayout supports zooming, object selection, and
+    * object editing.
+         */
+        SGTData newData;
+        Tough2DataSGT td = null;
+        JPlotLayout rpl;//qui era JPlotLayout2...che era modificato da me
+        ContourLevels clevels;
+        /*
+    * Take the data from tough2-data
+         */
+        float nxx = Float.valueOf(jTextField2.getText());
+        float nyy = Float.valueOf(jTextField3.getText());
+        float nzz = Float.valueOf(jTextField4.getText());
+        float floatneighbors = Float.valueOf(jTextField5.getText());
+        nx = (int) nxx;
+        ny = (int) nyy;
+        nz = (int) nzz;
+        neighbors = (int) floatneighbors;
+
+        double xmin = Tough2Viewer.dataobj.get_xmin();
+        double xmax = Tough2Viewer.dataobj.get_xmax();
+        double deltax = (xmax - xmin) / (double) nx;
+        double ymin = Tough2Viewer.dataobj.get_ymin();
+        double ymax = Tough2Viewer.dataobj.get_ymax();
+        double deltay = (ymax - ymin) / (double) ny;
+        double zmin = Tough2Viewer.dataobj.get_zmin();
+        double zmax = Tough2Viewer.dataobj.get_zmax();
+        double deltaz = (zmax - zmin) / (double) nz;
+        float y_su_x = 1.0f;
+        String testo = " ";
+        // xmin=10;xmax=20;ymin=100;ymax=200;deltax=1;deltay=10;
+        Range2D xr = new Range2D(xmin, xmax, deltax);
+        Range2D yr = new Range2D(ymin, ymax, deltay);
+        Range2D zr = new Range2D(zmin, zmax, deltaz);
+        int type = jComboBox2.getSelectedIndex();
+        int type1 = 0;
+        float xyz = Float.valueOf(jTextField1.getText());
+        if (type == 0) {
+            type1 = Tough2DataSGT.XY_GRID;
+            td = new Tough2DataSGT(type1, xr, yr,
+                    Tough2DataSGT.TOUGH2DATA, 12.0f, 30.f, 5.0f, nx, ny, nz, xyz, neighbors);
+            y_su_x = (float) (1.0f / ((ymax - ymin) / (xmax - xmin)));
+            testo = "XY section at z=" + jTextField1.getText() + " m";
+            Xmin_grd = xmin;
+            Xmax_grd = xmax;
+            Ymin_grd = ymin;
+            Ymax_grd = ymax;
+            nx_grd = nx + 1;
+            ny_grd = ny + 1;
+        }
+        if (type == 1) {
+            type1 = Tough2DataSGT.XZ_GRID;
+            td = new Tough2DataSGT(type1, xr, zr,
+                    Tough2DataSGT.TOUGH2DATA, 12.0f, 30.f, 5.0f, nx, ny, nz, xyz, neighbors);
+            y_su_x = (float) (1.0f / ((zmax - zmin) / (xmax - xmin)));
+            testo = "XZ section at y= " + jTextField1.getText() + " m";
+            Xmin_grd = xmin;
+            Xmax_grd = xmax;
+            Ymin_grd = zmin;
+            Ymax_grd = zmax;
+            nx_grd = nx + 1;
+            ny_grd = nz + 1;
+        }
+        if (type == 2) {
+            type1 = Tough2DataSGT.YZ_GRID;
+            td = new Tough2DataSGT(type1, yr, zr,
+                    Tough2DataSGT.TOUGH2DATA, 12.0f, 30.f, 5.0f, nx, ny, nz, xyz, neighbors);
+            y_su_x = (float) (1.0f / ((zmax - zmin) / (ymax - ymin)));
+            testo = "YZ section at x= " + jTextField1.getText() + " m";
+            Xmin_grd = ymin;
+            Xmax_grd = ymax;
+            Ymin_grd = zmin;
+            Ymax_grd = zmax;
+            nx_grd = ny + 1;
+            ny_grd = nz + 1;
+        }
+        tableGRD = td.get_grid();
+        newData = td.getSGTData();
+        /*
+    * Create the layout without a Logo image and with the
+    * ColorKey on a separate Pane object.
+         */
+
+        rpl = new JPlotLayout(true, false, false, "Countor Plot", null, true);
+        rpl.setEditClasses(false);
+        /*
+    * Create a GridAttribute for CONTOUR style.
+         */
+        double[] stat = td.get_stat();
+        int nlevels = 10;
+        double deltalevel = (stat[1] - stat[0]) / nlevels;
+        if (stat[1] == stat[0]) {
+
+            String error = "Min==Max. Choose another timestep o parameter";
+            JOptionPane.showMessageDialog(null, error);
+            rpl = null;
+            return rpl;
+        }
+        Zmin_grd = stat[0];
+        Zmax_grd = stat[1];
+        Range2D datar = new Range2D(stat[0], stat[1], deltalevel);
+        clevels = ContourLevels.getDefault(datar);
+        gridAttr_ = new GridAttribute(clevels);
+        /*
+    * Create a ColorMap and change the style to RASTER_CONTOUR.
+         */
+        ColorMap cmap = createColorMap(datar);
+        gridAttr_.setColorMap(cmap);
+        gridAttr_.setStyle(GridAttribute.RASTER_CONTOUR);
+        /*
+    * Add the grid to the layout and give a label for
+    * the ColorKey.
+         */
+        rpl.addData(newData, gridAttr_, "First Data");
+        /*
+    * Change the layout's three title lines.
+         */
+        int index = jComboBox1.getSelectedIndex();
+        rpl.setTitles("Contour Plot " + (String) jComboBox1.getSelectedItem() + "(" + UM[index] + ")",
+                testo,
+                "");
+        /*
+    * Resize the graph  and place in the "Center" of the frame.
+         */
+        // rpl.setSize(new Dimension(500, 400));
+        Dimension dimen = rpl.getSize();
+
+        /*
+    * Resize the key Pane, both the device size and the physical
+    * size. Set the size of the key in physical units and place
+    * the key pane at the "South" of the frame.
+         */
+        rpl.setKeyLayerSizeP(new Dimension2D(6.0, 1.02));
+        rpl.setKeyBoundsP(new Rectangle2D.Double(0.01, 1.01, 5.98, 1.0));
+        return rpl;
+    }
+
+    void plotGraph() {
+        if (initcompleted) {
+            if (rpl_ != null) {
+                rpl_.removeAll();
+            }
+            rpl_ = makeGraph();
+            if (rpl_ == null) {
+                return;
+            }
+            rpl_.setBatch(true);
+            jPanel1.removeAll();
+            jPanel1.add(rpl_, BorderLayout.CENTER);
+            jPanel1.repaint();
+            this.repaint();
+            getContentPane().add(jPanel1, "Center");
+            rpl_.setBatch(false);
+            rpl_.setBatch(false);
+        }
+    }
+
+    ColorMap createColorMap(Range2D datar) {
+        int[] red
+                = {0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 7, 23, 39, 55, 71, 87, 103,
+                    119, 135, 151, 167, 183, 199, 215, 231,
+                    247, 255, 255, 255, 255, 255, 255, 255,
+                    255, 255, 255, 255, 255, 255, 255, 255,
+                    255, 246, 228, 211, 193, 175, 158, 140};
+        int[] green
+                = {0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 11, 27, 43, 59, 75, 91, 107,
+                    123, 139, 155, 171, 187, 203, 219, 235,
+                    251, 255, 255, 255, 255, 255, 255, 255,
+                    255, 255, 255, 255, 255, 255, 255, 255,
+                    255, 247, 231, 215, 199, 183, 167, 151,
+                    135, 119, 103, 87, 71, 55, 39, 23,
+                    7, 0, 0, 0, 0, 0, 0, 0};
+        int[] blue
+                = {127, 143, 159, 175, 191, 207, 223, 239,
+                    255, 255, 255, 255, 255, 255, 255, 255,
+                    255, 255, 255, 255, 255, 255, 255, 255,
+                    255, 247, 231, 215, 199, 183, 167, 151,
+                    135, 119, 103, 87, 71, 55, 39, 23,
+                    7, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0};
+
+        IndexedColorMap cmap = new IndexedColorMap(red, green, blue);
+        cmap.setTransform(new LinearTransform(0.0, (double) red.length,
+                datar.start, datar.end));
+        return cmap;
+    }
+    /**
+     * @param args the command line arguments
+     */
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButtonEdit;
+    private javax.swing.JButton jButtonExport;
+    private javax.swing.JButton jButtonLayout;
+    private javax.swing.JButton jButtonPrint;
+    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JComboBox jComboBox2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JSlider jSlider1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
+    private javax.swing.JButton jTree;
+    // End of variables declaration//GEN-END:variables
+
+}
