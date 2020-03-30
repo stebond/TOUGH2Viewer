@@ -1,6 +1,6 @@
 # TOUGH2Viewer
 
-# Introduction
+# 1. Introduction
 TOUGH2Viewer is a pre and post-processing program dedicated for TOUGH (Pruess, 1999) users who want to edit grid, view and explore the results of numerical simulations in a fast, simple and intuitive mode. It is developed in Java ™, which provides portability between operating systems.
 TOUGH2Viewer allows to display grids, locally refined or less, structured (made with the MESHMAKER module of TOUGH2), unstructured Voronoi 2.5D (made with a version of AMESH modified by the authors) and fully unstructured 3D Voronoi grids created with VORO2MESH.
 Related publications can be found in Bonduà et al. (2012, 2017).
