@@ -33,7 +33,7 @@ The program consists of two sub-compressed, dist (distribution) and ExampleData 
 # 3.3. TOUGH2Viewer execution in Windows
 To run the program, use the following command line (dos):
 
-d:\T2Viewer\dist\>java -Xmx512M -jar iTough2Viewer.jar
+d:\T2Viewer\dist\>java -Xmx512M -jar Tough2Viewer.jar
 
 Or double click on the file icon go.bat present in the folder dist.
 Both options require to the JRE to allocate 512 MB of RAM.
