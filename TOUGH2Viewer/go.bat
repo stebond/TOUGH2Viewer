@@ -1,1 +1,1 @@
-java -Xmx512M -jar iTough2Viewer.jar
+java -Xmx512M -jar Tough2Viewer.jar
