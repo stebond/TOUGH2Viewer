@@ -2182,12 +2182,12 @@ public class GlobalVariables {
         String FilePathString = file.getPath();
 
         set_WorkingPath(FilePath);
-        float xmin = 0.0f;
-        float xmax = 0.0f;
-        float ymin = 0.0f;
-        float ymax = 0.0f;
-        float zmin = 0.0f;
-        float zmax = 0.0f;
+        float xmin_l = +1.0e20f;
+        float xmax_l = -1.0e20f;
+        float ymin_l = +1.0e20f;
+        float ymax_l = -1.0e20f;
+        float zmin_l = +1.0e20f;
+        float zmax_l = -1.0e20f;
         FileInputStream fis;
         BufferedInputStream bis;
         DataInputStream dis;
@@ -2259,32 +2259,14 @@ public class GlobalVariables {
                                 JOptionPane.showMessageDialog(null, a);
                                 return false;
                             }
-                            if (i == 0) {
-                                xmin = xo;
-                                xmax = xo;
-                                ymin = yo;
-                                ymax = yo;
-                                zmin = zo;
-                                zmax = zo;
-                            }
-                            if (xo < xmin) {
-                                xmin = xo;
-                            }
-                            if (xo > xmax) {
-                                xmax = xo;
-                            }
-                            if (yo < ymin) {
-                                ymin = yo;
-                            }
-                            if (yo > ymax) {
-                                ymax = yo;
-                            }
-                            if (zo < zmin) {
-                                zmin = zo;
-                            }
-                            if (zo > zmax) {
-                                zmax = zo;
-                            }
+                            xmin_l=min(xo,xmin_l);
+                            ymin_l=min(yo,ymin_l);
+                            zmin_l=min(zo,zmin_l);
+                            xmax_l=max(xo,xmax_l);
+                            ymax_l=max(yo,ymax_l);
+                            zmax_l=max(zo,zmax_l);
+                            
+                           
 
                             set_BlockName(blockName, i);
                             set_rock_type(blockMaterialType, i);
@@ -2564,12 +2546,12 @@ public class GlobalVariables {
                 break;
             }
             if (gridtype != 2) {
-                set_xmin(xmin);
-                set_xmax(xmax);
-                set_ymin(ymin);
-                set_ymax(ymax);
-                set_zmin(zmin);
-                set_zmax(zmax);
+                set_xmin(xmin_l);
+                set_xmax(xmax_l);
+                set_ymin(ymin_l);
+                set_ymax(ymax_l);
+                set_zmin(zmin_l);
+                set_zmax(zmax_l);
             }
             fis.close();
             bis.close();
