@@ -2033,10 +2033,14 @@ public class GlobalVariables {
                 Tough2Viewer.dataobj.addVariableName(var_name);
                 Tough2Viewer.dataobj.addVariableNameUM(var_name);
             }
-
+            float[] Times_tmp = new float[timesteps];
+            for (int i_t = 0; i_t < timesteps; i_t++) 
+            {
+                        Times_tmp[i_t] = Times[i_t];
+            } 
             Tough2Viewer.dataobj.dataArrayCreate(nxyz, timesteps);//qui si può fare di meglio
             for (int i_b = 0; i_b < nxyz; i_b++) {
-                for (int i = 0; i < offset; i++) {
+                for (int i = 0; i < number_of_variables-offset; i++) {
                     for (int i_t = 0; i_t < timesteps; i_t++) {
                         dataArray[i_b][i_t][i] = dataArray_tmp[i_b][i_t][i];
                     }
@@ -2046,10 +2050,15 @@ public class GlobalVariables {
             for (int i_b = 0; i_b < nxyz; i_b++) {
                 for (int i = 0; i < n_var; i++) {
                     for (int i_t = 0; i_t < timesteps; i_t++) {
-                        Tough2Viewer.dataobj.set_dataArray(i_b, i_t, i + offset, (float) tmp_values[i_b][i]);
+                        //Tough2Viewer.dataobj.set_dataArray(i_b, i_t, i + offset, (float) tmp_values[i_b][i]);
+                        Tough2Viewer.dataobj.set_dataArray(i_b, i_t, i + number_of_variables-offset, (float) tmp_values[i_b][i]);
                     }
                 }
             }
+            for (int i_t = 0; i_t < timesteps; i_t++) 
+            {
+                        Times[i_t] = Times_tmp[i_t];
+            } 
             fis.close();
             bis.close();
             dis.close();
