@@ -5,8 +5,9 @@
 package Tough2ViewerPRJ;
 
 /**
- *
- * @author stebond
+ * 
+ * @author stebond  
+ * 
  */
 import java.awt.Canvas;
 import java.awt.Color;
@@ -115,6 +116,7 @@ class ScaleCanvas extends Canvas {
             double label = VarMin + (deltaLabel * il);
             //String mylabel=Double.toString(label);
             String mylabel = String.format(Tough2Viewer.dataobj.FormatDouble, label);
+            mylabel=mylabel.replace(",",".");
             int actual_width = g.getFontMetrics().stringWidth(myLabel[il]);
 
             int position = number_of_labels - 1 - il;

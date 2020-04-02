@@ -1,7 +1,5 @@
 package Tough2ViewerPRJ;
 
-import com.sun.j3d.utils.geometry.Cone;
-import com.sun.j3d.utils.geometry.Cylinder;
 import java.awt.Font;
 import javax.vecmath.*;
 import javax.media.j3d.*;

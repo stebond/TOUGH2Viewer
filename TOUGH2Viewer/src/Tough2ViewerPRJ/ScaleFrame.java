@@ -221,6 +221,25 @@ public class ScaleFrame extends javax.swing.JFrame {
             }
 
         }
+        for (int i = 0; i < jComboBox2.getItemCount(); i++) {
+            jComboBox2.setSelectedIndex(i);
+            BufferedImage img2save = canvasToImage(canvas2);
+            String filename = "colormap_" + Tough2Viewer.dataobj.get_DataFileName() + "_" + (String) jComboBox2.getSelectedItem() + ".png";
+            String FilePathString = Tough2Viewer.dataobj.get_WorkingPath();
+            filename=filename.replace("\\","_");
+            filename=filename.replace("/","_");
+            String SuggestedFileName = FilePathString + "\\" + filename;
+            
+            try {
+                File file = new File(SuggestedFileName);
+                ImageIO.write(img2save, "png", file);
+            } catch (IOException e) {
+                String error = "File I/O error";
+                JOptionPane.showMessageDialog(null, error);
+                JOptionPane.showMessageDialog(null, e.toString());
+            }
+
+        }
 
     }
 
