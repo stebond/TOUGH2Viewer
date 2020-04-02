@@ -111,7 +111,8 @@ class ScaleCanvas extends Canvas {
             }
 
         }
-
+ 
+        
         for (int il = 0; il < number_of_labels; il = il + 1) {
             double label = VarMin + (deltaLabel * il);
             //String mylabel=Double.toString(label);

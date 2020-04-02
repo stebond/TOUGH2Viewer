@@ -4,6 +4,7 @@ import java.awt.Font;
 import javax.vecmath.*;
 import javax.media.j3d.*;
 
+
 //Draws the axis & lines for translucent bounding box
 public class Scale3D extends Group {
 

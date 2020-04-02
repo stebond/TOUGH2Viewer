@@ -220,6 +220,7 @@ public class ScaleFrame extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, e.toString());
             }
 
+            
         }
         for (int i = 0; i < jComboBox2.getItemCount(); i++) {
             jComboBox2.setSelectedIndex(i);
