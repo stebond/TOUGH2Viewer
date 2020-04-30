@@ -44,7 +44,7 @@ To reserve more memory to the execution of TOUGH2Viewer, and to allow viewing of
 # 4.4 Cloning, modify and Run with NetBeans
 install Java3D on you OS. Clone the repository with NetBeans:
 1. team->Git->Clone...
-2. enter the specified path: https://github.com/stebond/TOUGH2ViewerX.git
+2. enter the specified path: https://github.com/stebond/TOUGH2Viewer.git
 3. open the project
 4. click on Run->Run project (TOUGH2Viewer). Note that by running TOUGH2Viewer inside the NetBeans platform, the RAM reservation has been set to 2048 MB. This property can be changend in Run->Set Project Configuration->Customize... . In the Project properties dialog box select Run-> VM options and modify the default value "-2048M" to a desidered value.
 
