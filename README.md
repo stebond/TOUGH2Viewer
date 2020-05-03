@@ -32,7 +32,7 @@ The following instructions allow you to correct the error
 TOUGH2Viewer can be downloaded from https://github.com/stebond/TOUGH2Viewer/blob/master/T2Viewer_v2.0.zip.
 To install TOUGH2Viewer, copy the compressed file in to the user's chosen folder (e.g. TOUGH2Viewer_v.X.zip where X indicates the version).
 The operating system and system logs are not modified by the installation.
-Once the copy finished, you must unzip the directory. In the QuickTutorial book, the files are copied in the directory “d:\T2Viewer\” (Windows Operative System).
+Once the copy finished, you must unzip the directory. In the QuickTutorial book (https://github.com/stebond/TOUGH2Viewer/blob/master/TutorialTOUGH2Viewer_ver.2.0.pdf), the files are copied in the directory “d:\T2Viewer\” (Windows Operative System).
 The program consists of a dist folder (distribution). ExampleData must be downloaded separtely from https://github.com/stebond/TOUGH2Viewer/blob/master/ExampleData.zip.
 # 4.3. TOUGH2Viewer execution in Windows
 To run the program, use the following command line (dos):
