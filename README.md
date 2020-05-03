@@ -29,10 +29,11 @@ The following instructions allow you to correct the error
 4.	Navigate to the folder "C:\Program Files\Java\Java3D\1.5.X\lib\ext" and "C:\Program Files\Java\jre6\lib\ext";
 5.	Copy and paste the file file j3dcode.jar, j3dutils.jar and vecmath.jar from C:\Program files\Java\Java3D\1.5.X\lib\ext" to "C:\Program Files\Java\jre6\lib\ext".
 # 4.2. TOUGH2Viewer binary installation
-To install TOUGH2Viewer copy the user's chosen folder in the hard disk directory containing the compressed program (e.g. TOUGH2Viewer_v.X.zip where X indicates the version).
+TOUGH2Viewer can be downloaded from https://github.com/stebond/TOUGH2Viewer/blob/master/T2Viewer_v2.0.zip.
+To install TOUGH2Viewer, copy the compressed file in to the user's chosen folder (e.g. TOUGH2Viewer_v.X.zip where X indicates the version).
 The operating system and system logs are not modified by the installation.
 Once the copy finished, you must unzip the directory. In the QuickTutorial book, the files are copied in the directory “d:\T2Viewer\” (Windows Operative System).
-The program consists of two sub-compressed, dist (distribution) and ExampleData folders.
+The program consists of a dist folder (distribution). ExampleData must be downloaded separtely from https://github.com/stebond/TOUGH2Viewer/blob/master/ExampleData.zip.
 # 4.3. TOUGH2Viewer execution in Windows
 To run the program, use the following command line (dos):
 
